@@ -4,23 +4,13 @@ import './App.css';
 import {robots} from './robots';
 import SearchBox from './SearchBox';
 import Meme from './Meme';
-const firebase = require("firebase");
-// Required for side-effects
-require("firebase/firestore");
-let memes = [] ;
-  var firebaseConfig = {
-    apiKey: "AIzaSyB3SbMFJ8DoPPwMs-4gy8zAzlLfLpS2P_c",
-    authDomain: "memes-f0109.firebaseapp.com",
-    databaseURL: "https://memes-f0109.firebaseio.com",
-    projectId: "memes-f0109",
-    storageBucket: "",
-    messagingSenderId: "920175333778",
-    appId: "1:920175333778:web:bc71767d56fb0cf1"
-  };
-  // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+import db from './firestore';
+// const firebase = require("firebase");
 
-const db = firebase.firestore();
+// // Required for side-effects
+// require("firebase/firestore");
+let memes = [] ;
+ 
 
 
 
@@ -34,8 +24,9 @@ let robo=[];
   }
 
 class App extends Component {
-  constructor(){
-    super();
+ 
+  constructor(props){
+    super(props);
    
  
  this.state={
@@ -47,10 +38,7 @@ class App extends Component {
 
 
 
-  likechange=(event)=>{
-   console.log(event);
-  
-  }
+ 
  
 
 componentDidMount(){
@@ -62,7 +50,7 @@ db.collection("meme")
 
           robo.forEach(function(item,i){
            
-              if(item.created_time == doc.data().created_time)
+              if(item.id == doc.data().id)
                  { status=true;
                 
                  }
@@ -73,14 +61,17 @@ db.collection("meme")
           if(!status){
           
             robo.unshift(doc.data());
+          
+             x.setState({robots:robo});
+            
           }
           else{
-                console.log("doc exist");
+              //  console.log("doc exist");
           }
         });
         // console.log("Current cities in CA: ",robo);
         // console.log("in db",x);
-        x.setState({robots:robo});
+       
     });
 
 
@@ -102,7 +93,7 @@ db.collection("meme")
     }else{
   return (
     <div>
-     <Meme robots={this.state.robots} likechange={this.likechange}/>
+     <Meme robots={this.state.robots} database={db}/>
     </div>
   );
 }
